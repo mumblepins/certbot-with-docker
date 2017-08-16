@@ -7,10 +7,10 @@ DOCKER_VERSION=17.06
 
 curl -sSl "https://raw.githubusercontent.com/docker-library/docker/master/${DOCKER_VERSION}/Dockerfile" |  sed  '0,/^FROM.*$/ d' | sed '/^COPY docker-entrypoint.*/,$ d' > dockerinfo.tmp
 
-DOCKER_DATA=$(perl -pe 's/<INSERT_DOCKER_MAKE_HERE>/`cat dockerinfo.tmp`/ge' ${DOCKERFILE})
+perl -pe 's/<INSERT_DOCKER_MAKE_HERE>/`cat dockerinfo.tmp`/ge' ${DOCKERFILE} > Dockerfile.out
 
-echo "$DOCKER_DATA" | docker build \
+docker build \
     --build-arg VCS_REF=$(git rev-parse --short HEAD) \
     --build-arg BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
     --build-arg VERSION="$VERSION" \
-    -t $IMAGE_NAME
+    -t $IMAGE_NAME -f Dockerfile.out
