@@ -3,11 +3,15 @@
 set -xe
 VERSION="$(cat VERSION | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
 DOCKERFILE=Dockerfile
-DOCKER_VERSION=17.06
+DOCKER_UPSTREAM="https://raw.githubusercontent.com/docker-library/docker/a6b52c73daa8283cd861f41f55e53426008708ac/17.09/Dockerfile"
 
-curl -sSl "https://raw.githubusercontent.com/docker-library/docker/master/${DOCKER_VERSION}/Dockerfile" |  sed  '0,/^FROM.*$/ d' | sed '/^COPY docker-entrypoint.*/,$ d' > dockerinfo.tmp
+curl -sSl "${DOCKER_UPSTREAM}" |  sed  '0,/^FROM.*$/ d' | sed '/^COPY docker-entrypoint.*/,$ d' > dockerinfo.tmp
+
+cat dockerinfo.tmp
 
 perl -pe 's/<INSERT_DOCKER_MAKE_HERE>/`cat dockerinfo.tmp`/ge' ${DOCKERFILE} > Dockerfile.out
+
+
 
 docker build \
     --build-arg VCS_REF=$(git rev-parse --short HEAD) \
