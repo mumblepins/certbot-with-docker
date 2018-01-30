@@ -1,7 +1,7 @@
 FROM certbot/certbot:latest
 
 ENV DOCKER_CHANNEL stable
-ENV DOCKER_VERSION 17.09.0-ce
+ENV DOCKER_VERSION 17.12.0-ce
 
 RUN set -ex; \
     apk add --no-cache --virtual .fetch-deps \
